@@ -4,7 +4,7 @@ env:
   APP_NAME: stashable-prod
   S3_BUCKET: stashable-ebs-deployments
   AWS_REGION: us-east-1
-  AWS_PLATFORM: "64bit Amazon Linux 2 v3.4.4 running Docker"
+  AWS_PLATFORM: 64bit Amazon Linux 2 v3.4.4 running Docker
   EC2_KEY_NAME: stashable
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
 
@@ -60,6 +60,6 @@ jobs:
           eb --version
 
           echo "Deploy init"
-          eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{env.EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
+          eb init -i ${{env.APP_NAME}} -p "${{env.AWS_PLATFORM}}" -k ${{env.EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
           eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
           echo "Deploy finished"
