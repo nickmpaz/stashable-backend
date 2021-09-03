@@ -1,7 +1,8 @@
 name: Deploy
 
 env:
-  APP_NAME: stashable-prod
+  APP_NAME: stashable
+  APP_ENV: stashable-prod
   S3_BUCKET: stashable-ebs-deployments
   AWS_REGION: us-east-1
   AWS_PLATFORM: arn:aws:elasticbeanstalk:us-east-1::platform/Docker running on 64bit Amazon Linux 2/3.4.4
@@ -27,7 +28,7 @@ jobs:
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Creating Source Bundle"
-          zip -r ${{env.APP_NAME}}.zip app.js Dockerfile dockerignore package.json
+          zip -r ${{env.APP_NAME}}.zip .
           S3_KEY="$AWS_VERSION_LABEL.zip"
 
           echo "Uploading Source Bundle to S3"
@@ -60,6 +61,6 @@ jobs:
           eb --version
 
           echo "Deploy init"
-          eb init -i ${{env.APP_NAME}} -p "${{env.AWS_PLATFORM}}" -k ${{env.EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
-          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
+          eb init -i ${{env.APP_ENV}} -p "${{env.AWS_PLATFORM}}" -k ${{env.EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
+          eb deploy ${{env.APP_ENV}} --version ${AWS_VERSION_LABEL}
           echo "Deploy finished"
