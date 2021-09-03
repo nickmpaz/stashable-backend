@@ -12,5 +12,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME}
-    volumes: 
-      - ${DATABASE_HOST_VOLUME}:${DATABASE_CONTAINER_VOLUME}
+    # volumes: 
+    #   - ${DATABASE_HOST_VOLUME}:${DATABASE_CONTAINER_VOLUME}
