@@ -1,7 +1,7 @@
 name: Deploy
 
 env:
-  APP_NAME: stashable
+  APP_NAME: stashable-prod
   S3_BUCKET: stashable-ebs-deployments
   AWS_REGION: us-east-1
   AWS_PLATFORM: Docker
