@@ -34,6 +34,10 @@ const envBoolean = (variableName: string): boolean => {
   return process.env[variableName] === 'true';
 };
 
+const envBase64 = (variableName: string): string => {
+  return Buffer.from(process.env[variableName], 'base64').toString();
+};
+
 export default (): { config: Configuration } => ({
   config: {
     app: {
@@ -50,7 +54,7 @@ export default (): { config: Configuration } => ({
     },
     firebase: {
       projectId: envString('FIREBASE_PROJECT_ID'),
-      privateKey: envString('FIREBASE_PRIVATE_KEY'),
+      privateKey: envBase64('FIREBASE_PRIVATE_KEY'),
       clientEmail: envString('FIREBASE_CLIENT_EMAIL'),
     },
     googleBooks: {
