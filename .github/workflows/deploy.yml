@@ -4,7 +4,7 @@ env:
   APP_NAME: stashable-prod
   S3_BUCKET: stashable-ebs-deployments
   AWS_REGION: us-east-1
-  AWS_PLATFORM: 64bit Amazon Linux 2 v3.4.4 running Docker
+  AWS_PLATFORM: arn:aws:elasticbeanstalk:us-east-1::platform/Docker running on 64bit Amazon Linux 2/3.4.4
   EC2_KEY_NAME: stashable
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
 
