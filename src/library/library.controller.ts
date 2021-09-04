@@ -36,16 +36,12 @@ export class LibraryController {
   }
 
   @Get(':id')
-  async findOne(
+  findOne(
     @AuthUser()
     user: User,
     @Param('id') id: string,
   ) {
-    console.log('LIBRARY CONTROLLER');
-    console.log({ user });
-    const libraryItem = await this.libraryService.findOne(user, +id);
-    console.log({ libraryItem });
-    return libraryItem;
+    return this.libraryService.findOne(user, +id);
   }
 
   @Patch(':id')

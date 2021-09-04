@@ -26,14 +26,11 @@ export class AuthService {
   }
 
   async validateRequest(request: any): Promise<User | null> {
-    console.log('===');
     try {
       const idToken = request.get('idToken');
-      console.log({ idToken });
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const { sub, name, email } = decodedToken;
       let user = await this.usersRepository.findOne({ sub });
-      console.log({ user });
       if (user === undefined) {
         user = this.usersRepository.create({
           sub,
@@ -42,10 +39,8 @@ export class AuthService {
         });
         this.usersRepository.save(user);
       }
-      console.log('===');
       return user;
     } catch (err) {
-      console.log({ err });
       return null;
     }
   }
