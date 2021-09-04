@@ -28,7 +28,7 @@ export class AuthService {
   async validateRequest(request: any): Promise<User | null> {
     console.log('===');
     try {
-      const idToken = request.get('Authorization');
+      const idToken = request.get('idToken');
       console.log({ idToken });
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const { sub, name, email } = decodedToken;
