@@ -29,6 +29,7 @@ export class AuthService {
     console.log('===');
     try {
       const idToken = request.get('Authorization');
+      console.log({ idToken });
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const { sub, name, email } = decodedToken;
       let user = await this.usersRepository.findOne({ sub });
