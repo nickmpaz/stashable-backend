@@ -37,9 +37,8 @@ export class LibraryService {
 
   // todo DTO
   async findOne(user: User, bookId: number) {
-    this.logger.debug({ user });
+    this.logger.log({ user });
     const book = await this.booksRepository.findOne(bookId);
-    this.logger.debug({ book });
     let libraryItem = await this.libraryItemsRepository.findOne({ user, book });
     return libraryItem;
   }
