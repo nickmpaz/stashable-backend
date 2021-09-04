@@ -1,12 +1,14 @@
 name: Deploy
 
 env:
-  APP_NAME: stashable
-  APP_ENV: stashable-prod
-  S3_BUCKET: stashable-ebs-deployments
-  AWS_REGION: us-east-1
-  AWS_PLATFORM: arn:aws:elasticbeanstalk:us-east-1::platform/Docker running on 64bit Amazon Linux 2/3.4.4
-  EC2_KEY_NAME: stashable
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  EBS_APP_NAME: ${{ secrets.EBS_APP_NAME }}
+  EBS_APP_ENV: ${{ secrets.EBS_APP_ENV }}
+  EBS_DEPLOYMENT_BUCKET: ${{ secrets.EBS_DEPLOYMENT_BUCKET }}
+  EBS_PLATFORM: ${{ secrets.EBS_PLATFORM }}
+  EBS_EC2_KEY_NAME: ${{ secrets.EBS_EC2_KEY_NAME }}
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
 
 on:
@@ -23,21 +25,21 @@ jobs:
       - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
+          AWS_VERSION_LABEL=${{env.EBS_APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Creating Source Bundle"
-          zip -r ${{env.APP_NAME}}.zip .
+          zip -r ${{env.EBS_APP_NAME}}.zip .
           S3_KEY="$AWS_VERSION_LABEL.zip"
 
           echo "Uploading Source Bundle to S3"
-          aws s3 cp ${{env.APP_NAME}}.zip s3://${{env.S3_BUCKET}}/${S3_KEY} --region ${{env.AWS_REGION}}
+          aws s3 cp ${{env.EBS_APP_NAME}}.zip s3://${{env.EBS_DEPLOYMENT_BUCKET}}/${S3_KEY} --region ${{env.AWS_REGION}}
 
           echo "Creating Elastic Beanstalk version"
-          aws elasticbeanstalk create-application-version --application-name ${{env.APP_NAME}} --version-label $AWS_VERSION_LABEL --region ${{env.AWS_REGION}} --source-bundle S3Bucket=${{env.S3_BUCKET}},S3Key=${S3_KEY} --auto-create-application
+          aws elasticbeanstalk create-application-version --application-name ${{env.EBS_APP_NAME}} --version-label $AWS_VERSION_LABEL --region ${{env.AWS_REGION}} --source-bundle S3Bucket=${{env.EBS_DEPLOYMENT_BUCKET}},S3Key=${S3_KEY} --auto-create-application
 
   deploy_aws:
     needs: [create_eb_version]
@@ -51,11 +53,11 @@ jobs:
       - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
+          AWS_VERSION_LABEL=${{env.EBS_APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Installing Elastic Beanstalk Cli"
           python -m pip install --upgrade pip
@@ -63,6 +65,6 @@ jobs:
           eb --version
 
           echo "Deploy init"
-          eb init -i ${{env.APP_ENV}} -p "${{env.AWS_PLATFORM}}" -k ${{env.EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
-          eb deploy ${{env.APP_ENV}} --version ${AWS_VERSION_LABEL}
+          eb init -i ${{env.EBS_APP_ENV}} -p "${{env.EBS_PLATFORM}}" -k ${{env.EBS_EC2_KEY_NAME}} --region ${{env.AWS_REGION}}
+          eb deploy ${{env.EBS_APP_ENV}} --version ${AWS_VERSION_LABEL}
           echo "Deploy finished"
